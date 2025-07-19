@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
+import { InventoryPage } from '../pages/InventoryPage';
 
 const accounts = [
   { username: 'standard_user', password: 'secret_sauce', expectError: false },
@@ -10,7 +11,7 @@ const accounts = [
   { username: 'visual_user', password: 'secret_sauce', expectError: false },
 ];
 
-test.describe('🧪 Проверка авторизации пользователей на saucedemo.com', () => {
+test.describe('🧪 Проверка авторизации пользователей', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
   });
@@ -18,19 +19,14 @@ test.describe('🧪 Проверка авторизации пользовате
   for (const account of accounts) {
     test(`Авторизация: ${account.username}`, async ({ page }) => {
       const loginPage = new LoginPage(page);
-
       await loginPage.login(account.username, account.password);
 
       if (account.expectError) {
-        // Проверка ошибки при неправильной авторизации
         await loginPage.checkErrorMessage('Sorry');
       } else {
-        // Проверка успешной авторизации
-        await expect(page).toHaveURL(/inventory/);
-
-        // Проверка, что на странице есть товары
-        const items = await page.locator('.inventory_item').count();
-        expect(items).toBeGreaterThan(0);
+        const inventoryPage = new InventoryPage(page);
+        await inventoryPage.checkPageIsOpened();
+        await inventoryPage.checkInventoryItemsExist();
       }
     });
   }
