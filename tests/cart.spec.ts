@@ -1,63 +1,62 @@
 import { expect } from '@playwright/test';
-import { test } from './fixtures'; // фикстурный test
+import { test } from './fixtures';
 import { CartPage } from '../pages/CartPage';
+import { InventoryPage } from '../pages/InventoryPage';
 
 test.describe('🛒 Тесты корзины', () => {
 
   test('Добавление одного товара в корзину', async ({ standardUserPage }) => {
     const page = standardUserPage;
-
-    // Добавляем 1 товар
-    await page.click('[data-test="add-to-cart-sauce-labs-backpack"]');
-
+    const inventoryPage = new InventoryPage(page);
     const cartPage = new CartPage(page);
+
+    await inventoryPage.addBackpackToCart();
     await cartPage.openCart();
-    await cartPage.checkItemsCount(1); // проверка: 1 товар в корзине
+    await cartPage.checkItemsCount(1);
   });
 
   test('Добавление нескольких товаров в корзину', async ({ standardUserPage }) => {
     const page = standardUserPage;
-
-    // Добавляем 3 разных товара
-    await page.click('[data-test="add-to-cart-sauce-labs-backpack"]');
-    await page.click('[data-test="add-to-cart-sauce-labs-bike-light"]');
-    await page.click('[data-test="add-to-cart-sauce-labs-bolt-t-shirt"]');
-
+    const inventoryPage = new InventoryPage(page);
     const cartPage = new CartPage(page);
+
+    await inventoryPage.addBackpackToCart();
+    await inventoryPage.addBikeLightToCart();
+    await inventoryPage.addTShirtToCart();
+
     await cartPage.openCart();
-    await cartPage.checkItemsCount(3); // проверка: 3 товара
+    await cartPage.checkItemsCount(3);
   });
 
   test('Удаление одного товара из корзины', async ({ standardUserPage }) => {
     const page = standardUserPage;
-
-    // Добавляем 2 товара
-    await page.click('[data-test="add-to-cart-sauce-labs-backpack"]');
-    await page.click('[data-test="add-to-cart-sauce-labs-bike-light"]');
-
+    const inventoryPage = new InventoryPage(page);
     const cartPage = new CartPage(page);
-    await cartPage.openCart();
 
-    // Удаляем 1 из них
-    await page.click('[data-test="remove-sauce-labs-bike-light"]');
-    await cartPage.checkItemsCount(1); // должно остаться 1
+    await inventoryPage.addBackpackToCart();
+    await inventoryPage.addBikeLightToCart();
+
+    await cartPage.openCart();
+    await cartPage.removeBikeLight();
+    await cartPage.checkItemsCount(1);
   });
 
   test('Пустая корзина при старте', async ({ standardUserPage }) => {
     const cartPage = new CartPage(standardUserPage);
 
     await cartPage.openCart();
-    await cartPage.checkItemsCount(0); // ничего не добавляли → 0
+    await cartPage.checkItemsCount(0);
   });
 
   test('Счётчик товаров в иконке корзины', async ({ standardUserPage }) => {
     const page = standardUserPage;
+    const inventoryPage = new InventoryPage(page);
+    const cartPage = new CartPage(page);
 
-    await page.click('[data-test="add-to-cart-sauce-labs-backpack"]');
-    await page.click('[data-test="add-to-cart-sauce-labs-bike-light"]');
+    await inventoryPage.addBackpackToCart();
+    await inventoryPage.addBikeLightToCart();
 
-    // Проверка значка с цифрой на иконке корзины
-    await expect(page.locator('.shopping_cart_badge')).toHaveText('2');
+    await cartPage.checkCartBadgeCount(2);
   });
 
 });
