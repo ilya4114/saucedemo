@@ -6,9 +6,8 @@ import { InventoryPage } from '../pages/InventoryPage';
 test.describe('🛒 Тесты корзины', () => {
 
   test('Добавление одного товара в корзину', async ({ standardUserPage }) => {
-    const page = standardUserPage;
-    const inventoryPage = new InventoryPage(page);
-    const cartPage = new CartPage(page);
+    const inventoryPage = new InventoryPage(standardUserPage);
+    const cartPage = new CartPage(standardUserPage);
 
     await inventoryPage.addBackpackToCart();
     await cartPage.openCart();
@@ -16,9 +15,8 @@ test.describe('🛒 Тесты корзины', () => {
   });
 
   test('Добавление нескольких товаров в корзину', async ({ standardUserPage }) => {
-    const page = standardUserPage;
-    const inventoryPage = new InventoryPage(page);
-    const cartPage = new CartPage(page);
+    const inventoryPage = new InventoryPage(standardUserPage);
+    const cartPage = new CartPage(standardUserPage);
 
     await inventoryPage.addBackpackToCart();
     await inventoryPage.addBikeLightToCart();
@@ -29,9 +27,8 @@ test.describe('🛒 Тесты корзины', () => {
   });
 
   test('Удаление одного товара из корзины', async ({ standardUserPage }) => {
-    const page = standardUserPage;
-    const inventoryPage = new InventoryPage(page);
-    const cartPage = new CartPage(page);
+    const inventoryPage = new InventoryPage(standardUserPage);
+    const cartPage = new CartPage(standardUserPage);
 
     await inventoryPage.addBackpackToCart();
     await inventoryPage.addBikeLightToCart();
@@ -49,9 +46,8 @@ test.describe('🛒 Тесты корзины', () => {
   });
 
   test('Счётчик товаров в иконке корзины', async ({ standardUserPage }) => {
-    const page = standardUserPage;
-    const inventoryPage = new InventoryPage(page);
-    const cartPage = new CartPage(page);
+    const inventoryPage = new InventoryPage(standardUserPage);
+    const cartPage = new CartPage(standardUserPage);
 
     await inventoryPage.addBackpackToCart();
     await inventoryPage.addBikeLightToCart();
