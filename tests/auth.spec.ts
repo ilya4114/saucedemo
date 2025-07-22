@@ -1,33 +1,41 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from './fixtures';
 import { LoginPage } from '../pages/LoginPage';
 import { InventoryPage } from '../pages/InventoryPage';
 
-const accounts = [
-  { username: 'standard_user', password: 'secret_sauce', expectError: false },
-  { username: 'locked_out_user', password: 'secret_sauce', expectError: true },
-  { username: 'problem_user', password: 'secret_sauce', expectError: false },
-  { username: 'performance_glitch_user', password: 'secret_sauce', expectError: false },
-  { username: 'error_user', password: 'secret_sauce', expectError: false },
-  { username: 'visual_user', password: 'secret_sauce', expectError: false },
-];
-
 test.describe('🧪 Проверка авторизации пользователей', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('https://www.saucedemo.com/');
+  test('Авторизация: standard_user', async ({ standardUserPage }) => {
+    const inventoryPage = new InventoryPage(standardUserPage);
+    await inventoryPage.checkPageIsOpened();
+    await inventoryPage.checkInventoryItemsExist();
   });
 
-  for (const account of accounts) {
-    test(`Авторизация: ${account.username}`, async ({ page }) => {
-      const loginPage = new LoginPage(page);
-      await loginPage.login(account.username, account.password);
+  test('Авторизация: locked_out_user (ожидаем ошибку)', async ({ lockedOutUserPage }) => {
+    const loginPage = new LoginPage(lockedOutUserPage);
+    await loginPage.checkErrorMessage('Sorry');
+  });
 
-      if (account.expectError) {
-        await loginPage.checkErrorMessage('Sorry');
-      } else {
-        const inventoryPage = new InventoryPage(page);
-        await inventoryPage.checkPageIsOpened();
-        await inventoryPage.checkInventoryItemsExist();
-      }
-    });
-  }
+  test('Авторизация: problem_user', async ({ problemUserPage }) => {
+    const inventoryPage = new InventoryPage(problemUserPage);
+    await inventoryPage.checkPageIsOpened();
+    await inventoryPage.checkInventoryItemsExist();
+  });
+
+  test('Авторизация: performance_glitch_user', async ({ glitchUserPage }) => {
+    const inventoryPage = new InventoryPage(glitchUserPage);
+    await inventoryPage.checkPageIsOpened();
+    await inventoryPage.checkInventoryItemsExist();
+  });
+
+  test('Авторизация: error_user', async ({ errorUserPage }) => {
+    const inventoryPage = new InventoryPage(errorUserPage);
+    await inventoryPage.checkPageIsOpened();
+    await inventoryPage.checkInventoryItemsExist();
+  });
+
+  test('Авторизация: visual_user', async ({ visualUserPage }) => {
+    const inventoryPage = new InventoryPage(visualUserPage);
+    await inventoryPage.checkPageIsOpened();
+    await inventoryPage.checkInventoryItemsExist();
+  });
 });

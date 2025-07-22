@@ -1,17 +1,28 @@
-import { Page, expect } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 
 export class LoginPage {
-  constructor(private page: Page) {}
+  readonly page: Page;
+  readonly usernameInput: Locator;
+  readonly passwordInput: Locator;
+  readonly loginButton: Locator;
+  readonly errorMessage: Locator;
 
-  async login(username: string, password: string) {
-    await this.page.fill('[data-test="username"]', username);
-    await this.page.fill('[data-test="password"]', password);
-    await this.page.click('[data-test="login-button"]');
+  constructor(page: Page) {
+    this.page = page;
+    this.usernameInput = page.locator('[data-test="username"]');
+    this.passwordInput = page.locator('[data-test="password"]');
+    this.loginButton = page.locator('[data-test="login-button"]');
+    this.errorMessage = page.locator('[data-test="error"]');
   }
 
-  async checkErrorMessage(expectedText: string) {
-    const error = this.page.locator('[data-test="error"]');
-    await expect(error).toBeVisible();
-    await expect(error).toContainText(expectedText);
+  async login(username: string, password: string) {
+    await this.usernameInput.fill(username);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
+  }
+
+  async checkErrorMessage(containsText: string) {
+    await expect(this.errorMessage).toBeVisible();
+    await expect(this.errorMessage).toContainText(containsText);
   }
 }
